@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 45,
-    fontWeight: 600,
+    fontWeight: '600',
     color: '#fff',
     padding: '5em',
   },
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   colorText: {
     fontSize: 16,
-    fontWeight: 300,
+    fontWeight: '300',
     fontColor: '#757083',
     opacity: '100%',
     justifyContent: 'flex-start',
