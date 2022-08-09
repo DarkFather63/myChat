@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   colorText: {
     fontSize: 16,
     fontWeight: '300',
-    fontColor: '#757083',
+    color: '#757083',
     opacity: '100%',
     justifyContent: 'flex-start',
     margin: '20px'
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   button: {
     fontSize: 16,
     fontWeight: '600',
-    fontColor: '#fff',
+    color: '#fff',
     color: '#757083',
   },
 })
