@@ -66,6 +66,8 @@ export default class Start extends React.Component {
               </View>
 
               <View style={styles.buttonContainer}>
+
+                {/* the button styling options are minimal - if more styling is needed, change button to touchable opacity or similar */}
                 <Button
                   style={styles.button}
                   title="Start Chatting"
