@@ -1,8 +1,7 @@
 import React from "react";
 import * as Font from 'expo-font';
-import { StyleSheet, View, Text, Button, } from 'react-native';
+import { StyleSheet, View, Text, Button, ImageBackground, TouchableOpacity } from 'react-native';
 import { TextInput } from "react-native-gesture-handler";
-import { ImageBackground, TouchableOpacity } from "react-native-web";
 
 //Color options HEX codes: #090C08; #474056; #8A95A5; #B9C6AE
 
@@ -92,25 +91,30 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     fontFamily: 'Poppins',
   },
+  backgroundImage: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   titleText: {
     fontSize: 45,
     fontWeight: '600',
     color: '#fff',
-    padding: '5em',
+    margin: 'auto',
+    padding: '30%',
+    flexWrap: 'nowrap'
   },
   signInContainer: {
-    height: '44%',
-    width: '88%',
     backgroundColor: '#fff',
     margin: '6%',
+    justifyContent: 'space-evenly',
+    resizeMode: 'cover'
   },
   colorText: {
     fontSize: 16,
     fontWeight: '300',
     color: '#757083',
-    opacity: '100%',
     justifyContent: 'flex-start',
-    margin: '20px'
+    margin: 20
   },
   colorSelect: {
     flexDirection: 'row',
@@ -118,35 +122,35 @@ const styles = StyleSheet.create({
   },
   color1: {
     backgroundColor: '#090C08',
-    width: '30px',
-    height: '30px',
-    borderRadius: '50%',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     alignItems: 'center',
-    margin: '15px'
+    margin: 15
   },
   color2: {
     backgroundColor: '#474056',
-    width: '30px',
-    height: '30px',
-    borderRadius: '50%',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     alignItems: 'center',
-    margin: '15px'
+    margin: 15
   },
   color3: {
     backgroundColor: '#8A95A5',
-    width: '30px',
-    height: '30px',
-    borderRadius: '50%',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     alignItems: 'center',
-    margin: '15px'
+    margin: 15
   },
   color4: {
     backgroundColor: '#B9C6AE',
-    width: '30px',
-    height: '30px',
-    borderRadius: '50%',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     alignItems: 'center',
-    margin: '15px'
+    margin: 15
   },
   textInput: {
     fontFamily: 'Poppins',
@@ -155,8 +159,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '300',
     color: '#757083',
-    opacity: '50%',
-    margin: '1rem',
+    margin: '10%',
+    padding: 10
   },
   buttonContainer: {
     width: '95%',
