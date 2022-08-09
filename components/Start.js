@@ -48,7 +48,7 @@ export default class Start extends React.Component {
       return (
         <View style={styles.container}>
           <ImageBackground
-            source={require('../assets/background-image.png')}>
+            source={require('../assets/background-image.png')} style={styles.backgroundImage}>
             <Text style={styles.titleText}>myChat</Text>
 
             <View style={styles.signInContainer}>
@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     justifyContent: 'center',
+    resizeMode: 'cover'
   },
   titleText: {
     fontSize: 45,
@@ -107,7 +108,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     margin: '6%',
     justifyContent: 'space-evenly',
-    resizeMode: 'cover'
   },
   colorText: {
     fontSize: 16,
