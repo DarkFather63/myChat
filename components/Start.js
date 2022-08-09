@@ -20,7 +20,7 @@ export default class Start extends React.Component {
   changeColor = (newColor) => {
     this.setState({ color: newColor });
   };
-  www
+
 
   //background colors to pass to changeColor function
   colors = {
