@@ -68,7 +68,9 @@ export default class Start extends React.Component {
               <View style={styles.buttonContainer}>
                 <Button
                   style={styles.button}
-                  title="Go to Chat"
+                  title="Start Chatting"
+                  color='#757083'
+                  accessibilityLabel="Button to start chatting"
                   //this is where react-natives navigate functions come in handy again - allows navigation between screens/views
                   onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name, color: this.state.color })} />
               </View>
@@ -164,12 +166,13 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '95%',
+    height: 50,
     margin: '2.5%',
   },
   button: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
-    color: '#757083',
+    color: '#FFFFFF',
+    position: 'absolute'
   },
 })
