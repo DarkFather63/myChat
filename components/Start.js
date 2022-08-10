@@ -55,14 +55,28 @@ export default class Start extends React.Component {
 
               <TextInput placeholder="Your Name" style={styles.textInput}
                 //onChangeText is a built in function that takes a prop and can manipulate its state for text elements
-                onChangeText={(name) => this.setState({ name })} />
+                onChangeText={(name) => this.setState({ name })}
+                accessibilityLabel="Text input for user name" />
 
               <Text style={styles.colorText}>Choose background color:</Text>
               <View style={styles.colorSelect}>
-                <TouchableOpacity style={styles.color1} onPress={() => this.changeColor(this.colors.black)}></TouchableOpacity>
-                <TouchableOpacity style={styles.color2} onPress={() => this.changeColor(this.colors.darkPurple)}></TouchableOpacity>
-                <TouchableOpacity style={styles.color3} onPress={() => this.changeColor(this.colors.gray)}></TouchableOpacity>
-                <TouchableOpacity style={styles.color4} onPress={() => this.changeColor(this.colors.green)}></TouchableOpacity>
+                {/* Added accessibility labels to each touchable - can add hints and roles as well */}
+                <TouchableOpacity
+                  style={styles.color1}
+                  onPress={() => this.changeColor(this.colors.black)}
+                  accessibilityLabel="Background color choice button: black"></TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.color2}
+                  onPress={() => this.changeColor(this.colors.darkPurple)}
+                  accessibilityLabel="Background color choice button: dark purple"></TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.color3}
+                  onPress={() => this.changeColor(this.colors.gray)}
+                  accessibilityLabel="Background color choice button: gray"></TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.color4}
+                  onPress={() => this.changeColor(this.colors.green)}
+                  accessibilityLabel="Background color choice button: green"></TouchableOpacity>
               </View>
 
               <View style={styles.buttonContainer}>
@@ -73,7 +87,9 @@ export default class Start extends React.Component {
                   title="Start Chatting"
                   color='#757083'
                   accessibilityLabel="Button to start chatting"
-                  //this is where react-natives navigate functions come in handy again - allows navigation between screens/views
+                  accessibilityRole="Button"
+                  //this is where react-natives navigate functions come in handy again - allows navigation between screens/views. Also
+                  //allows passing of props to the component being 'navigated' to.
                   onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name, color: this.state.color })} />
               </View>
             </View>
