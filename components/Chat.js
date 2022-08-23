@@ -12,8 +12,12 @@ export default class Chat extends React.Component {
     super();
     this.state = {
       messages: [],
-      uid: '',
-
+      uid: 0,
+      user: {
+        _id: '',
+        name: '',
+        avatar: '',
+      },
     }
 
     const firebaseConfig = {
@@ -29,6 +33,9 @@ export default class Chat extends React.Component {
     if (!firebase.apps.length) {
       initializeApp(firebaseConfig);
     }
+
+    //this is your reference to firestore to load messages
+    this.referenceChatMessages = firebase.firestore().collection('messages');
   }
 
   onCollectionUpdate = (querySnapshot) => {
@@ -40,23 +47,40 @@ export default class Chat extends React.Component {
         _id: data._id,
         text: data.text,
         createdAt: data.createdAt.toDate(),
-        user: data.user,
+        user: {
+          _id: data.user._id,
+          name: data.user.name,
+          avatar: data.user.avatar || '',
+        }
       });
     });
     this.setState({
-      messages,
+      messages: messages,
     });
   };
+
+  addMessage() {
+    const message = this.state.messages[0];
+    this.referenceChatMessages.add({
+      uid: this.state.uid,
+      _id: message._id,
+      text: message.text || '',
+      createdAt: message.createdAt,
+      user: message.user,
+
+    });
+  }
 
 
   componentDidMount() {
     //this 'routes' the props to this component, a bit like an import but still different!
     let name = this.props.route.params.name;
 
-    //this is also where you will insert your reference to firestore - like the 'this.referenceShoppingLists'
-    //in the exercise. Be sure to check that your 'messages' collection isn't empty in a statement, usually an if-else
+    // this will set the title of the screen to the state of the props (in this case, 'name')
+    this.props.navigation.setOptions({ title: name });
+
+    //this is your reference to firestore to load messages
     this.referenceChatMessages = firebase.firestore().collection('messages');
-    this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate);
 
     this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
       if (!user) {
@@ -65,23 +89,25 @@ export default class Chat extends React.Component {
 
       this.setState({
         uid: user.uid,
-        loggedInText: `Welcome, ${user}`
+        messages: [],
+        user: {
+          _id: user.uid,
+          name: name,
+          avatar: 'https://placeimg.com/140/140/any',
+        },
       });
+
+      this.referenceMessagesUser = firebase.firestore().collection('messages').where('uid', '==', this.state.uid);
+
+      this.unsubscribe = this.referenceChatMessages.orderBy('createdAt', 'desc').onSnapshot(this.onCollectionUpdate);
     });
 
-    //this v is important, though unsubscribe can be called in componentwillunmount, vs here
-    // if (this.referenceChatMessages !== null) {
-    //   this.unsubscribe();
-    // } else {
-    //   alert('Messages are empty. Please try reloading the app.')
-    // }
-
     this.setState({
-      //this is mostly for development as the first message is hardcoded - will eventually replace with a state update
-      // also note: while using Firebase, this is how data/'documents' will be formatted, in the 'messages' collection (because it's a noSQL database!)
-      // ^ this means that each document consists of a set of key-value pairs, i.e. 'text: "hello"' 
-      // furthermore, most chat apps will have sub-collections for each chatroom, i.e. 'weather'
-      // when setting up your database, use 'test mode' to make development a bit easier
+      //   //this is mostly for development as the first message is hardcoded - replaced with a state update
+      //   // also note: while using Firebase, this is how data/'documents' will be formatted, in the 'messages' collection (because it's a noSQL database!)
+      //   // ^ this means that each document consists of a set of key-value pairs, i.e. 'text: "hello"' 
+      //   // furthermore, most chat apps will have sub-collections for each chatroom, i.e. 'weather'
+      //   // when setting up your database, use 'test mode' to make development a bit easier
       messages: [
         {
           _id: 1,
@@ -102,9 +128,14 @@ export default class Chat extends React.Component {
         },
       ],
     })
+  }
 
-    // this will set the title of the screen to the state of the props (in this case, 'name')
-    this.props.navigation.setOptions({ title: name });
+  componentWillUnmount() {
+    if (this.referenceChatMessages !== null) {
+      this.authUnsubscribe();
+    } else {
+      alert('Messages are empty. Please try reloading the app.')
+    }
   }
 
 
@@ -130,7 +161,11 @@ export default class Chat extends React.Component {
     // 'previousState' is used to check message state as well
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages),
-    }))
+    }),
+      () => {
+        this.addMessage();
+      }
+    )
   }
 
   render() {
@@ -138,7 +173,6 @@ export default class Chat extends React.Component {
 
     return (
       <View style={[{ backgroundColor: color }, styles.container]}>
-
         {/* renders the message interface using the Gifted Chat library - chat bubbles rendered using built-in renderbubble function. 
         Also implements onSend function*/}
         <GiftedChat
@@ -146,7 +180,9 @@ export default class Chat extends React.Component {
           messages={this.state.messages}
           onSend={messages => this.onSend(messages)}
           user={{
-            _id: 1,
+            _id: this.state.user._id,
+            name: this.state.user.name,
+            avatar: this.state.user.avatar,
           }}
         />
         {/* KeyboardAvoidingView overrides android issue where the keyboard hides the text input - using ternary 
