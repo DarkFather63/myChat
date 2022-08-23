@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { useFonts } from 'expo-font';
 import { StyleSheet, Text, View } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+
 
 // import the screens we want to navigate
 import Start from './components/Start';
