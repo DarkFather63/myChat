@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, View, Text, Platform, KeyboardAvoidingView } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { initializeApp } from "firebase";
 import * as firebase from 'firebase';
@@ -71,6 +72,18 @@ export default class Chat extends React.Component {
     });
   }
 
+  async getMessages() {
+    let messages = '';
+    try {
+      messages = await AsyncStorage.getItem('messages') || [];
+      this.setState({
+        messages: JSON.parse(messages)
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
 
   componentDidMount() {
     //this 'routes' the props to this component, a bit like an import but still different!
@@ -81,6 +94,8 @@ export default class Chat extends React.Component {
 
     //this is your reference to firestore to load messages
     this.referenceChatMessages = firebase.firestore().collection('messages');
+
+    this.getMessages();
 
     this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
       if (!user) {
@@ -102,32 +117,7 @@ export default class Chat extends React.Component {
       this.unsubscribe = this.referenceChatMessages.orderBy('createdAt', 'desc').onSnapshot(this.onCollectionUpdate);
     });
 
-    this.setState({
-      //   //this is mostly for development as the first message is hardcoded - replaced with a state update
-      //   // also note: while using Firebase, this is how data/'documents' will be formatted, in the 'messages' collection (because it's a noSQL database!)
-      //   // ^ this means that each document consists of a set of key-value pairs, i.e. 'text: "hello"' 
-      //   // furthermore, most chat apps will have sub-collections for each chatroom, i.e. 'weather'
-      //   // when setting up your database, use 'test mode' to make development a bit easier
-      messages: [
-        {
-          _id: 1,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
-          },
-        },
-        {
-          _id: 2,
-          text: `${name} has entered the chat`,
-          createdAt: new Date(),
-          //this is a system message, which means it displays above the chat initiation (in this case letting us know we joined the chat)
-          system: true,
-        },
-      ],
-    })
+    //removed hardcoded message and user info here. Using asyncStorage now.
   }
 
   componentWillUnmount() {
