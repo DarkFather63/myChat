@@ -192,6 +192,7 @@ export default class Chat extends React.Component {
       messages: GiftedChat.append(previousState.messages, messages),
     }),
       () => {
+        this.addMessage();
         this.saveMessages();
       }
     )
@@ -206,6 +207,7 @@ export default class Chat extends React.Component {
         Also implements onSend function*/}
         <GiftedChat
           renderBubble={this.renderBubble.bind(this)}
+          renderInputToolbar={this.renderInputToolbar.bind(this)}
           messages={this.state.messages}
           onSend={messages => this.onSend(messages)}
           user={{
