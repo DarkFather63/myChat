@@ -1,7 +1,8 @@
 import React from "react";
 import { StyleSheet, View, Text, Platform, KeyboardAvoidingView } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import NetInfo from '@react-native-community/netinfo';
+import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 import { initializeApp } from "firebase";
 import * as firebase from 'firebase';
 
@@ -82,6 +83,26 @@ export default class Chat extends React.Component {
     } catch (error) {
       console.log(error.message);
     }
+  };
+
+
+  async saveMessages() {
+    try {
+      await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+    } catch (error) {
+      console.log(error.message)
+    }
+  };
+
+  async deleteMessages() {
+    try {
+      await AsyncStorage.removeItem('messages');
+      this.setState({
+        messages: []
+      })
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
 
@@ -91,6 +112,14 @@ export default class Chat extends React.Component {
 
     // this will set the title of the screen to the state of the props (in this case, 'name')
     this.props.navigation.setOptions({ title: name });
+
+    NetInfo.fetch().then(connection => {
+      if (connection.isConnected) {
+        console.log('online');
+      } else {
+        console.log('offline');
+      }
+    })
 
     //this is your reference to firestore to load messages
     this.referenceChatMessages = firebase.firestore().collection('messages');
@@ -107,7 +136,7 @@ export default class Chat extends React.Component {
         messages: [],
         user: {
           _id: user.uid,
-          name: name,
+          name: user.name,
           avatar: 'https://placeimg.com/140/140/any',
         },
       });
@@ -141,9 +170,19 @@ export default class Chat extends React.Component {
           right: {
             backgroundColor: '#c4afe0',
           }
-        }}
-      />);
+        }} />);
+  }
 
+  renderInputToolbar(props) {
+    if (this.state.isConnected == false) {
+
+    } else {
+      return (
+        <InputToolbar
+          {...props}
+        />
+      );
+    }
   }
 
   // this is also a Gifted Chat function - allows state preserving of messages and appends new messages
@@ -153,7 +192,7 @@ export default class Chat extends React.Component {
       messages: GiftedChat.append(previousState.messages, messages),
     }),
       () => {
-        this.addMessage();
+        this.saveMessages();
       }
     )
   }
