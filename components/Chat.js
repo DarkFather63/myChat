@@ -4,8 +4,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from '@react-native-community/netinfo';
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 import { initializeApp } from "firebase";
-import * as firebase from 'firebase';
 
+const firebase = require('firebase');
 require('firebase/firestore');
 
 //this is the chat screen, where chat can take place in UI
@@ -20,6 +20,7 @@ export default class Chat extends React.Component {
         name: '',
         avatar: '',
       },
+      isConnected: null,
     }
 
     const firebaseConfig = {
@@ -47,7 +48,7 @@ export default class Chat extends React.Component {
       let data = doc.data();
       messages.push({
         _id: data._id,
-        text: data.text,
+        text: data.text || '',
         createdAt: data.createdAt.toDate(),
         user: {
           _id: data.user._id,
@@ -57,7 +58,7 @@ export default class Chat extends React.Component {
       });
     });
     this.setState({
-      messages: messages,
+      messages,
     });
   };
 
@@ -115,42 +116,47 @@ export default class Chat extends React.Component {
 
     NetInfo.fetch().then(connection => {
       if (connection.isConnected) {
+        this.setState({
+          isConnected: true,
+        });
         console.log('online');
+
+
+        //this is your reference to firestore to load messages
+        this.referenceChatMessages = firebase.firestore().collection('messages');
+
+
+        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+          if (!user) {
+            await firebase.auth().signInAnonymously();
+          }
+
+          this.setState({
+            uid: user.uid,
+            messages: [],
+            user: {
+              _id: user.uid,
+              name: name,
+              avatar: 'https://placeimg.com/140/140/any'
+            },
+          });
+
+          this.unsubscribe = this.referenceChatMessages.orderBy('createdAt', 'desc').onSnapshot(this.onCollectionUpdate);
+        });
+        //removed hardcoded message and user info here. Using asyncStorage now.
       } else {
+        this.setState({
+          isConnected: false,
+        });
+        this.getMessages();
         console.log('offline');
       }
-    })
-
-    //this is your reference to firestore to load messages
-    this.referenceChatMessages = firebase.firestore().collection('messages');
-
-    this.getMessages();
-
-    this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-      if (!user) {
-        await firebase.auth().signInAnonymously();
-      }
-
-      this.setState({
-        uid: user.uid,
-        messages: [],
-        user: {
-          _id: user.uid,
-          name: user.name,
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      });
-
-      this.referenceMessagesUser = firebase.firestore().collection('messages').where('uid', '==', this.state.uid);
-
-      this.unsubscribe = this.referenceChatMessages.orderBy('createdAt', 'desc').onSnapshot(this.onCollectionUpdate);
     });
-
-    //removed hardcoded message and user info here. Using asyncStorage now.
   }
 
   componentWillUnmount() {
-    if (this.referenceChatMessages !== null) {
+    if (this.isConnected) {
+      this.unsubscribe();
       this.authUnsubscribe();
     } else {
       alert('Messages are empty. Please try reloading the app.')
@@ -192,8 +198,10 @@ export default class Chat extends React.Component {
       messages: GiftedChat.append(previousState.messages, messages),
     }),
       () => {
-        this.addMessage();
         this.saveMessages();
+        if (this.state.isConnected === true) {
+          this.addMessage(this.state.messages[0]);
+        }
       }
     )
   }
