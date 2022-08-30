@@ -15,6 +15,9 @@ const Stack = createStackNavigator();
 
 export default function App() {
 
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  };
 
   return (
     <NavigationContainer>

@@ -191,9 +191,6 @@ export default class Chat extends React.Component {
     }
   }
 
-  renderCustomActions = (props) => {
-    return <CustomActions {...props} />;
-  };
 
   // this is also a Gifted Chat function - allows state preserving of messages and appends new messages
   onSend(messages = []) {
