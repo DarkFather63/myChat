@@ -7,7 +7,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 // import the screens we want to navigate
 import Start from './components/Start';
 import Chat from './components/Chat';
-import CustomActions from './components/CustomActions';
 
 
 //this variable uses a built in function (for react native) to create a navigator/routing system
@@ -15,9 +14,6 @@ const Stack = createStackNavigator();
 
 export default function App() {
 
-  renderCustomActions = (props) => {
-    return <CustomActions {...props} />;
-  };
 
   return (
     <NavigationContainer>

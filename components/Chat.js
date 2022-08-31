@@ -8,6 +8,8 @@ import { initializeApp } from "firebase";
 const firebase = require('firebase');
 require('firebase/firestore');
 
+import CustomActions from "./CustomActions";
+
 //this is the chat screen, where chat can take place in UI
 export default class Chat extends React.Component {
   constructor() {
@@ -62,6 +64,8 @@ export default class Chat extends React.Component {
     });
   };
 
+
+  //NOTE! add image and location data to this and other functions that will pass them to the view!
   addMessage() {
     const message = this.state.messages[0];
     this.referenceChatMessages.add({
@@ -159,7 +163,7 @@ export default class Chat extends React.Component {
       this.unsubscribe();
       this.authUnsubscribe();
     } else {
-      alert('Messages are empty. Please try reloading the app.')
+      alert('Messages are empty or you are disconnected. Please try reloading the app.')
     }
   }
 
@@ -191,6 +195,33 @@ export default class Chat extends React.Component {
     }
   }
 
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  }
+
+  renderCustomView(props) {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{
+            width: 150,
+            height: 100,
+            borderRadius: 13,
+            margin: 3,
+          }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  }
+
 
   // this is also a Gifted Chat function - allows state preserving of messages and appends new messages
   onSend(messages = []) {
@@ -218,6 +249,7 @@ export default class Chat extends React.Component {
           renderBubble={this.renderBubble.bind(this)}
           renderInputToolbar={this.renderInputToolbar.bind(this)}
           renderActions={this.renderCustomActions}
+          renderCustomView={this.renderCustomView}
           messages={this.state.messages}
           onSend={messages => this.onSend(messages)}
           user={{
