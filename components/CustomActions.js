@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from 'prop-types';
 import { StyleSheet, View, TouchableNativeFeedback, Text, Container } from 'react-native';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
@@ -97,6 +98,8 @@ export default class CustomActions extends React.Component {
 
     return await snapshot.ref.getDownloadURL();
   }
+
+
 
   onActionPress = () => {
     const options = ['Choose from Library', 'Take Picture', 'Send Location', 'Cancel'];
