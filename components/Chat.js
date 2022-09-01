@@ -14,17 +14,6 @@ import CustomActions from "./CustomActions";
 export default class Chat extends React.Component {
   constructor() {
     super();
-    this.state = {
-      messages: [],
-      uid: 0,
-      user: {
-        _id: '',
-        name: '',
-        avatar: '',
-      },
-      isConnected: null,
-    }
-
     const firebaseConfig = {
       apiKey: "AIzaSyCTBr-AfH0ltRBdxqM8aptOuCipg7kevmM",
       authDomain: "mychat-d84dd.firebaseapp.com",
@@ -41,6 +30,21 @@ export default class Chat extends React.Component {
 
     //this is your reference to firestore to load messages
     this.referenceChatMessages = firebase.firestore().collection('messages');
+
+    this.state = {
+      messages: [],
+      uid: 0,
+      user: {
+        _id: '',
+        name: '',
+        avatar: '',
+      },
+      image: null,
+      location: null,
+      isConnected: null,
+    }
+
+
   }
 
   onCollectionUpdate = (querySnapshot) => {
@@ -56,7 +60,9 @@ export default class Chat extends React.Component {
           _id: data.user._id,
           name: data.user.name,
           avatar: data.user.avatar || '',
-        }
+        },
+        image: data.image || null,
+        location: data.location || null,
       });
     });
     this.setState({
@@ -74,6 +80,8 @@ export default class Chat extends React.Component {
       text: message.text || '',
       createdAt: message.createdAt,
       user: message.user,
+      image: message.image || null,
+      location: message.location || null,
 
     });
   }
@@ -253,7 +261,7 @@ export default class Chat extends React.Component {
           messages={this.state.messages}
           onSend={messages => this.onSend(messages)}
           user={{
-            _id: this.state.user._id,
+            _id: this.state.uid,
             name: this.state.user.name,
             avatar: this.state.user.avatar,
           }}
