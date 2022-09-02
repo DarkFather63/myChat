@@ -9,10 +9,6 @@ import { Bubble } from "react-native-gifted-chat";
 import InputToolbar from 'react-native-gifted-chat';
 import GiftedChat from 'react-native-gifted-chat';
 
-import * as Permissions from 'expo-permissions';
-import * as ImagePicker from 'expo-image-picker';
-import * as Location from 'expo-location';
-
 import { initializeApp } from "firebase";
 
 import { CustomActions } from "./CustomActions";
@@ -24,7 +20,7 @@ import 'firebase/firestore';
 
 //this is the chat screen, where chat can take place in UI
 export default class Chat extends React.Component {
-  constructor(props) {
+  constructor() {
     super();
 
     const firebaseConfig = {
@@ -54,7 +50,7 @@ export default class Chat extends React.Component {
       },
       image: null,
       location: null,
-      isConnected: null,
+      isConnected: false,
     }
 
 
@@ -213,9 +209,8 @@ export default class Chat extends React.Component {
     }
   }
 
-  renderCustomActions = (props) => {
-    return <CustomActions {...props} />;
-  }
+  renderCustomActions = (props) => <CustomActions {...props} />;
+
 
   renderCustomView(props) {
     const { currentMessage } = props;
@@ -247,7 +242,7 @@ export default class Chat extends React.Component {
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages),
     }), () => {
-      this.addMessage(this.state.messages[0]);
+      this.addMessage();
       this.saveMessages();
       this.deleteMessages();
     }
