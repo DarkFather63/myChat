@@ -1,20 +1,32 @@
 import React from "react";
 import { StyleSheet, View, Text, Platform, KeyboardAvoidingView } from 'react-native';
-import MapView from 'react-native-maps'
+
+import MapView from 'react-native-maps';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import NetInfo from '@react-native-community/netinfo';
-import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
+import { Bubble } from "react-native-gifted-chat";
+import InputToolbar from 'react-native-gifted-chat';
+import GiftedChat from 'react-native-gifted-chat';
+
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
+
 import { initializeApp } from "firebase";
 
-const firebase = require('firebase');
-require('firebase/firestore');
+import { CustomActions } from "./CustomActions";
 
-import CustomActions from "./CustomActions";
+import firebase from "firebase";
+import 'firebase/firestore';
+
+
 
 //this is the chat screen, where chat can take place in UI
 export default class Chat extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
+
     const firebaseConfig = {
       apiKey: "AIzaSyCTBr-AfH0ltRBdxqM8aptOuCipg7kevmM",
       authDomain: "mychat-d84dd.firebaseapp.com",
@@ -162,7 +174,6 @@ export default class Chat extends React.Component {
           isConnected: false,
         });
         this.getMessages();
-        console.log('offline');
       }
     });
   }
@@ -171,8 +182,6 @@ export default class Chat extends React.Component {
     if (this.isConnected) {
       this.unsubscribe();
       this.authUnsubscribe();
-    } else {
-      alert('Messages are empty or you are disconnected. Please try reloading the app.')
     }
   }
 
@@ -237,13 +246,11 @@ export default class Chat extends React.Component {
     // 'previousState' is used to check message state as well
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages),
-    }),
-      () => {
-        this.saveMessages();
-        if (this.state.isConnected === true) {
-          this.addMessage(this.state.messages[0]);
-        }
-      }
+    }), () => {
+      this.addMessage(this.state.messages[0]);
+      this.saveMessages();
+      this.deleteMessages();
+    }
     )
   }
 
@@ -262,9 +269,8 @@ export default class Chat extends React.Component {
           messages={this.state.messages}
           onSend={messages => this.onSend(messages)}
           user={{
-            _id: this.state.uid,
+            _id: this.state.user._id,
             name: this.state.user.name,
-            avatar: this.state.user.avatar,
           }}
         />
         {/* KeyboardAvoidingView overrides android issue where the keyboard hides the text input - using ternary 

@@ -1327,7 +1327,7 @@
     "semver" "7.3.2"
     "xml2js" "0.4.23"
 
-"@expo/react-native-action-sheet@^3.6.0":
+"@expo/react-native-action-sheet@^3.13.0", "@expo/react-native-action-sheet@^3.6.0":
   "integrity" "sha512-EFLK35TBsM28W43SY54lISAIvjEm9584LIRWXsYaf5sgmfF65oWAOQP4UyKxMPLYGoaKjnCAJVFNtZUK80ss9A=="
   "resolved" "https://registry.npmjs.org/@expo/react-native-action-sheet/-/react-native-action-sheet-3.13.0.tgz"
   "version" "3.13.0"
