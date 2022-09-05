@@ -2,6 +2,7 @@ import React from "react";
 import * as Font from 'expo-font';
 import { StyleSheet, View, Text, Button, ImageBackground, TouchableOpacity } from 'react-native';
 import { TextInput } from "react-native-gesture-handler";
+import { Chat } from "./Chat";
 
 //Color options HEX codes: #090C08; #474056; #8A95A5; #B9C6AE
 
