@@ -13,7 +13,7 @@ import 'firebase/firestore';
 class CustomActions extends React.Component {
 
   pickImage = async () => {
-    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     try {
       if (status === 'granted') {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -31,7 +31,7 @@ class CustomActions extends React.Component {
   };
 
   takePhoto = async () => {
-    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY && Permissions.CAMERA);
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
 
     try {
       if (status === 'granted') {
@@ -50,7 +50,7 @@ class CustomActions extends React.Component {
   };
 
   getLocation = async () => {
-    const { status } = await Permissions.askAsync(Permissions.LOCATION_FOREGROUND);
+    const { status } = await Location.requestForegroundPermissionsAsync();
     try {
       if (status === 'granted') {
         let result = await Location.getCurrentPositionAsync({
@@ -147,8 +147,8 @@ class CustomActions extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    width: 26,
-    height: 26,
+    width: 21,
+    height: 21,
     marginLeft: 10,
     marginBottom: 10,
   },
@@ -156,7 +156,8 @@ const styles = StyleSheet.create({
     borderRadius: 13,
     borderColor: '#b2b2b2',
     borderWidth: 2,
-    flex: 1,
+    flex: .06,
+    margin: 10
   },
   iconText: {
     color: '#b2b2b2',
